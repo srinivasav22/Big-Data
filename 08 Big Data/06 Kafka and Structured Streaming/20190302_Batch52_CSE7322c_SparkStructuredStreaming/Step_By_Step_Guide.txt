@@ -1,0 +1,90 @@
+IP address where kafka broker is installed - c.insofe.edu.in (ip address will not work 172.16.0.218 )
+Kafka broker present on port - 9092
+
+###########################################################################
+1. Steps to check whether the messages are shown correctly
+   near producer and consumer in Kafka.
+###########################################################################
+
+############################################################
+How to create a topic:
+############################################################
+
+###########
+Terminal-1:
+###########
+
+# Export the kafka path
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+## Create a topic named <Topic Name> (e.g. insofe_topic_testgau) with a single partition and only one replica:
+kafka-topics.sh --create --zookeeper c.insofe.edu.in:2181 --replication-factor 1 --partitions 1 --topic testB52
+
+# Displays all the topics that are running
+kafka-topics.sh --list --zookeeper c.insofe.edu.in:2181
+
+#  Delete a topic from kafka
+# kafka-topics.sh --delete --zookeeper c.insofe.edu.in:2181 --topic testB52
+
+############################################################
+## Send some messages from producer
+############################################################
+# ip = c.insofe.edu.in or 0.0.0.0 (not running correctly when we use localhost)
+# Kafka comes with a command line client that will take input from a file or from standard input and send it out as messages to the Kafka cluster. By default, each line will be sent as a separate message.
+
+# Run the producer and then type a few messages into the console to send to the server.
+
+kafka-console-producer.sh --broker-list c.insofe.edu.in:9092 --topic testB52
+
+###########
+Terminal-2:
+###########
+
+# Export the kafka path
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+# Command to run the consumer - consuming the messages form specific topic using zookeer
+kafka-console-consumer.sh --bootstrap-server c.insofe.edu.in:9092 --topic testB52 --from-beginning
+
+
+
+
+
+#####################################################################################################################################
+Spark Streaming Word Count commands
+#######################################################################################################################################
+
+Path to inbuilt examples: /usr/hdp/current/spark2-client/examples/src/main/python/sql/streaming
+
+Run Netcat on terminal 1:
+
+nc -lk 9999
+
+Terminal-2 --- Spark Submit command for word count on net cat:
+#### Connected IP localhost
+
+spark-submit structured_network_wordcount.py <ip_address> 9999
+
+
+
+
+########################################################################################################################################
+Text Mining Application using Kafka Spark-Streaming and SparkML. 
+########################################################################################################################################
+
+1. spark-submit TextMiningApplicationModelBuild.py
+
+2. KafkaProducerFileReading.py - Kafka producer code to read data from "SMSSpamCollection" file and pushing to Kafka. 
+
+	Command:
+	python KafkaProducerFileReading.py
+
+3. Using spark streaming to read the stream data from Kafka and print the predicted value for the test data. 
+   
+   Command:
+	 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 KafkaStreamingConsumerPredictions.py
+	 
+###########################################################################
+
+Links:
+https://github.com/synhershko/Isengard.Tools/blob/master/kafka-fs-producer.py

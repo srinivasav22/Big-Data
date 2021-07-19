@@ -1,0 +1,67 @@
+-- Terminal 1 
+-- hive
+
+use test_srinivas;
+
+drop table if exists users;
+
+drop table if exists locations;
+
+drop database if exists test_srinivas;
+
+create database test_srinivas;
+
+use test_srinivas;
+
+-- Terminal 2
+dfs -ls /apps/hive/warehouse;
+
+-- Terminal 1(Hive)
+create table users
+(
+id INT,
+name string,
+locid INT,
+role string
+)
+row format delimited 
+fields terminated by '\t';
+
+load data local inpath '/home/2463B52/Hive/users.txt'
+into table users;
+
+create table locations
+(
+id int,
+location string
+)
+row format delimited
+fields terminated by '\t';
+
+load data local inpath '/home/pavanw/B52/Hive/locations.txt'
+into table locations;
+
+-- Terminal 2
+dfs -ls /apps/hive/warehouse/test_srinivas.db;
+
+-- Terminal 2
+dfs -ls /apps/hive/warehouse/test_srinivas.db/users;
+
+-- Terminal 2
+dfs -ls /apps/hive/warehouse/test_srinivas.db/locations;
+
+-- Terminal 1(Hive)
+select * from users;
+
+select * from locations;
+
+select * from users order by name asc;
+
+select locid, count(*) as No_position from users group by locid;
+
+set hive.execution.engine=mr;
+
+set mapred.reduce.tasks=2; 
+
+select locid, count(*) as No_position from users group by locid;
+

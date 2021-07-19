@@ -1,0 +1,37 @@
+############################################################
+How to create a topic:
+############################################################
+
+# Export the kafka path
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+## Create a topic named <Topic Name> (e.g. insofe_topic_testgau) with a single partition and only one replica:
+kafka-topics.sh --create --zookeeper c.insofe.edu.in:2181 --replication-factor 1 --partitions 1 --topic insofe_topic_B52
+
+# Displays all the topics that are running
+kafka-topics.sh --list --zookeeper  c.insofe.edu.in:2181
+
+
+############################################################
+## Send some messages from producer
+############################################################
+
+# Kafka comes with a command line client that will take input from a file or from standard input and send it out as messages to the # Kafka cluster. By default, each line will be sent as a separate message.
+
+# Run the producer and then type a few messages into the console to send to the server.
+kafka-console-producer.sh --broker-list c.insofe.edu.in:9092 --topic insofe_topic_B52
+
+############################################################
+# Start a consumer in another terrminal
+############################################################
+
+# Export the kafka path
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+# Kafka also has a command line consumer that will dump out messages to standard output.
+kafka-console-consumer.sh --bootstrap-server c.insofe.edu.in:9092 --topic insofe_topic_B52 --from-beginning
+############################################################
+# To delete an existing topic
+############################################################
+
+kafka-topics.sh --delete --zookeeper c.insofe.edu.in:2181 --topic insofe_topic_B52

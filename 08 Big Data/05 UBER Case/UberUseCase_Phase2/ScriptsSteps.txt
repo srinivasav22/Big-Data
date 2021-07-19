@@ -1,0 +1,64 @@
+==========================================
+Phase-1
+===========================================
+Note: Copy the HistoricalData/, StreamingData/, Jars/ and Flume Conf file from /user/thomasj/UberUseCase/Data/ path to Local file system (Linux)
+HistoricalData
+StreamingData
+Conf
+Jars
+
+##################
+Step-1: 
+##################
+Move Historical data from Local file system (Linux/CentOs on) to HDFS using Flume
+
+flume-ng agent --conf /home/thomasj/Batch52/UberUseCase/Conf/ -f /home/thomasj/Batch52/UberUseCase/Conf/flume.properties -Dflume.root.logger=DEBUG,console -n UberAgent
+
+##################
+Step-2: 
+##################
+Using the historical data build the cluster.
+	- Take sample data, identify the best number of clusters using K-Means. (files: 1_Sample_Data_Preparation.ipynb , 2_Find_K_Value.ipynb)
+	- Use the best cluster number and build the K means model on all the data (files: 3_Build_Model.ipynb).  
+
+
+===========================================
+Phase-2
+===========================================
+Step-3: In the terminal execute the below steps to create a kafka topic
+
+# Export the kafka path
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+## Create a topic named <Topic Name> (e.g. insofe_topic_testgau) with a single partition and only one replica:
+
+kafka-topics.sh --create --zookeeper c.insofe.edu.in:2181 --replication-factor 1 --partitions 1 --topic insofe_batch52
+
+# Displays all the topics that are running
+kafka-topics.sh --list --zookeeper c.insofe.edu.in:2181
+===========================================
+
+===========================================
+Step-4: Running the consumer end job
+# From one terminal run the spark stream processing job to get the messages from the topics, predict on the stream data and save the predictions to HDFS.
+# Spark_streaming.py     - Spark Stream processing program.
+# insofe_uberapp_batch47 - topic name 
+===========================================
+
+# Command to run the spark streaming consumer job
+ 
+spark-submit --jars /home/thomasj/Batch52/UberUseCase/Jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.0.jar /home/thomasj/Batch52/UberUseCase/SparkStreamingKafka/Spark_streaming.py c.insofe.edu.in:2181 insofe_batch52 
+
+===========================================
+Step-5:
+# From another terminal run the following command to push the Stream data to Kafka topic using kafka producer.
+# kafkaloader.sh - This script accepts 3 arguments 
+	- ../StreamingData/ - Input directory path
+	- ip address of the Kafka broker
+	- insofe_uberapp_batch45 - topic name
+===========================================
+# Run below command to push the data into kafka topics from producer
+
+bash /home/thomasj/Batch52/UberUseCase/SparkStreamingKafka/kafkaloader.sh /home/thomasj/Batch52/UberUseCase/StreamingData/ c.insofe.edu.in:9092 insofe_batch52
+
+Step-6: Verify streaming data available in HDFS

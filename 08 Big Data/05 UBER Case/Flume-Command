@@ -1,0 +1,1 @@
+flume-ng agent --conf /home/thomasj/Batch52/UberUseCase/Conf/ -f /home/thomasj/Batch52/UberUseCase/Conf/flume.properties -n UberAgent
